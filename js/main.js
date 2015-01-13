@@ -5,6 +5,7 @@ function kLetterWords(query, k) {
     });
 }
 
+// Construct a hash lookup table with pam250 values
 function pam250() {
     var lines = [
         '13 6 9 9 5 8 9 12 6 8 6 7 7 4 11 11 11 2 4 9',
@@ -47,4 +48,7 @@ function pam250() {
     });
 
     return pam250;
+}
+
+function scoreAlignment(word, database, scoringMatrix) {
 }

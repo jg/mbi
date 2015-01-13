@@ -1,2 +1,2 @@
 all:
-	tsc ts/main.ts --module "commonjs" --outDir js/
+	tsc ts/main.ts ts/test.ts --module "commonjs" --outDir js/

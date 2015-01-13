@@ -29,7 +29,8 @@ function pam250() {
          '0 2 0 0 0 0 0 0 1 0 1 0 0 1 0 1 0 55 1 0',
          '1 1 2 1 3 1 1 1 3 2 2 1 2 15 1 2 2 3 31 2',
          '7 4 4 4 4 4 4 4 5 4 15 10 4 10 5 5 5 72 4 17']
-    var headerString = "A    R    N    D    C    Q    E    G    H    I    L    K    M    F    P    S    T    W    Y    V"
+    var headerString = 
+        "A    R    N    D    C    Q    E    G    H    I    L    K    M    F    P    S    T    W    Y    V"
     var headers = _.str.clean(headerString).split(" ")
 
     var dataArray = _.map(lines, (line) => line.split(" "))
@@ -45,4 +46,8 @@ function pam250() {
                  ))
 
     return pam250;
+}
+
+
+function scoreAlignment(word, database, scoringMatrix) {
 }
