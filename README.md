@@ -17,15 +17,11 @@ Compile Typescript
 
 Run `grunt` command to automatically compile typescript on file change
 
+BLAST Info
+- https://www.youtube.com/watch?v=oSR6QkJO82s
 
 
 Running Tests
 -------------
 
 Open `test.html` in browser
-
-
-BLAST Info
-----------
-
-- https://www.youtube.com/watch?v=oSR6QkJO82s
