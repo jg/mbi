@@ -6,7 +6,10 @@
     <link href="css/bootstrap.css" media="all" rel="stylesheet" type="text/css"/>
     <link href="css/main.css" media="all" rel="stylesheet" type="text/css"/>
     <link href="css/todos.css" media="all" rel="stylesheet" type="text/css"/>
-    <script data-main="js/main" src="js/vendor/require.js"></script>
+    <script src="js/vendor/jquery.min.js"></script>
+    <script src="js/vendor/underscore-min.js"></script>
+    <script src="js/vendor/underscore.string.js"></script>
+    <script src="js/main.js"></script>
   </head>
 
   <body>
@@ -17,42 +20,46 @@
       <div id="form-errors"></div>
 
       <form class="form-horizontal" role="form">
+
         <div class="form-group">
           <label for="sequenceA" class="col-sm-3 control-label">Zapytanie</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" id="query">
           </div>
         </div>
+
         <div class="form-group">
           <label for="sequenceB" class="col-sm-3 control-label">Baza</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" id="db">
           </div>
         </div>
-        <div class="row">
-          <div class="col-sm-6">
-            <div class="form-group">
-              <label for="algorithm" class="col-sm-6 control-label">Długość podsłów</label>
-              <div class="col-sm-6">
-                <input type="text" class="form-control" id="sequenceB">
-              </div>
-            </div>
+
+        <div class="form-group">
+          <label for="algorithm" class="col-sm-3 control-label">Długość podsłów</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="sequenceB">
           </div>
-          <div class="col-sm-6">
-            <div class="form-group">
-              <label for="similarityMatrix" class="col-sm-6 control-label">T</label>
-              <div class="col-sm-6">
-                <select class="form-control" id="similarityMatrix"><option value="m1">Macierz 1</option><option value="m2">Macierz 2</option></select>
-              </div>
-            </div>
+        </div>
+
+        <div class="form-group">
+          <label for="algorithm" class="col-sm-3 control-label">T</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="sequenceB">
           </div>
-          <div class="col-sm-6">
-            <div class="form-group">
-              <label for="interactive" class="col-sm-6 control-label">Działanie krok po kroku</label>
-              <div class="col-sm-6 control-label">
-                <input type="checkbox" class="form-control" id="interactive">
-              </div>
-            </div>
+        </div>
+
+        <div class="form-group">
+          <label for="similarityMatrix" class="col-sm-3 control-label">Macierz</label>
+          <div class="col-sm-9">
+            <select class="form-control" id="similarityMatrix"><option value="m1">pam250</option></select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="interactive" class="col-sm-3 control-label">Działanie krok po kroku</label>
+          <div class="col-sm-9 control-label">
+            <input type="checkbox" class="form-control" id="interactive">
           </div>
         </div>
 
