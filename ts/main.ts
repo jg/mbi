@@ -6,7 +6,7 @@ function kLetterWords(query: string, k: number): Array<string> {
     });
 }
 
-// Construct a hash lookup table with pam250 values
+// Hash lookup table with pam250 values. pam250['A']['R'] = 3
 function pam250() {
     var lines =
         ['13 6 9 9 5 8 9 12 6 8 6 7 7 4 11 11 11 2 4 9',
@@ -37,17 +37,48 @@ function pam250() {
 
     var pam250 = {}
     _.each(headers, (header) => pam250[header] = {})
-    _.each(headers, (headerRow) =>
-           _.each(headers, (headerCol) => {
-                  var rowIndex = _.indexOf(headers, headerRow)
-                  var colIndex = _.indexOf(headers, headerCol)
-                  pam250[headerRow][headerCol] = dataArray[rowIndex][colIndex]
-           }
-                 ))
+
+        _.each(headers, (headerRow) => {
+            _.each(headers, (headerCol) => {
+                var rowIndex = _.indexOf(headers, headerRow)
+                var colIndex = _.indexOf(headers, headerCol)
+                pam250[headerRow][headerCol] = parseInt(dataArray[rowIndex][colIndex])
+            })
+        })
 
     return pam250;
 }
 
+function alphabet(): Array<string> {
+    var headerString = "A    R    N    D    C    Q    E    G    H    I    L    K    M    F    P    S    T    W    Y    V"
+    var headers = _.str.clean(headerString).split(" ")
+    return headers
+}
 
-function scoreAlignment(word, database, scoringMatrix) {
+function allKLetterWords(k: number): Array<string> {
+    var chars: Array<string> = alphabet()
+    return _.flatten(
+        _.map(chars, (l1) => {
+            return _.map(chars, (l2) => {
+                return _.map(chars, (l3) => {
+                    return l1 + l2 + l3
+                })
+            })
+        }))
+}
+
+
+function wordPairScore(scoringMatrix, word1: string, word2: string): number {
+    var letterScores: Array<number> = 
+        _.map(_.zip(word1, word2), (pair: Array<string>) => {
+            return scoringMatrix[pair[0]][pair[1]]
+        })
+    return _.reduce(letterScores, (acc: number, n: number) => { return acc + n }, 0)
+}
+
+function highScoringNeighbors(scoringMatrix, word: string, T: number) {
+    var l = word.length
+    return _.filter(allKLetterWords(l), (w) => {
+        return (wordPairScore(scoringMatrix, word, w) > T)
+    })
 }
