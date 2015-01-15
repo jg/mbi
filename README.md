@@ -36,6 +36,8 @@ Open `test.html` in browser
 BLAST Info
 ----------
 
+- http://www.imtech.res.in/raghava/slides/blast2.ppt
+- http://etutorials.org/Misc/blast/Part+III+Practice/Chapter+5.+BLAST/5.2+The+BLAST+Algorithm 
 - http://www.fing.edu.uy/inco/grupos/bioinf/bioinfo1/material/Blast_bioinfoI_set09.pdf
 - http://www.oreilly.de/catalog/blast/chapter/ch04.pdf
 - https://www.kth.se/social/upload/516d2f99f27654662fafca05/blastPresentation.pdf
