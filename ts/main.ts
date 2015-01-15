@@ -1,5 +1,6 @@
 /// <reference path="./references.ts" />
 
+// Return k letter substrings of query
 function kLetterWords(query: string, k: number): Array<string> {
     return _.map(_.range(0, query.length-k+1), (i: number) => {
         return query.slice(i, i+k);
@@ -68,8 +69,10 @@ function allKLetterWords(k: number): Array<string> {
 }
 
 
+// Compute word pair score given the scoringMatrix.
+// Words should be of same length.
 function wordPairScore(scoringMatrix, word1: string, word2: string): number {
-    var letterScores: Array<number> = 
+    var letterScores: Array<number> =
         _.map(_.zip(word1, word2), (pair: Array<string>) => {
             return scoringMatrix[pair[0]][pair[1]]
         })
