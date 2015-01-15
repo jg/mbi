@@ -26,3 +26,13 @@ QUnit.test("highScoringNeighbors / pam250", (assert) => {
     var expected = ["PRG", "PNG", "PDG", "PQG", "PEG", "PHG", "PKG", "PPG"]
     assert.deepEqual(highScoringNeighbors(pam250(), "PQG", 50), expected)
 })
+
+QUnit.test("findHitsInDatabase", (assert) => {
+    var db = "ASKIOPLLWLAASFLHNEQAPALSDAN"
+    var words = ["KIO", "HNE"]
+    var hits = findHitsInDatabase(db, words)
+    assert.equal(hits[0].word, "KIO")
+    assert.equal(hits[0].dbOffset, 2)
+    assert.equal(hits[1].word, "HNE")
+    assert.equal(hits[1].dbOffset, 15)
+})

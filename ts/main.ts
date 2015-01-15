@@ -1,5 +1,24 @@
 /// <reference path="./references.ts" />
 
+interface ScoreMatrixRow {
+    [letter: number]: number
+}
+
+interface ScoreMatrix {
+    [letter: number]: ScoreMatrixRow
+}
+
+interface Hit {
+    word: string
+    dbOffset: number
+}
+
+interface Alignment {
+    start: number
+    length: number
+    score: number
+}
+
 // Return k letter substrings of query
 function kLetterWords(query: string, k: number): Array<string> {
     return _.map(_.range(0, query.length-k+1), (i: number) => {
@@ -8,7 +27,7 @@ function kLetterWords(query: string, k: number): Array<string> {
 }
 
 // Hash lookup table with pam250 values. pam250['A']['R'] = 3
-function pam250() {
+function pam250(): ScoreMatrix {
     var lines =
         ['13 6 9 9 5 8 9 12 6 8 6 7 7 4 11 11 11 2 4 9',
          '3 17 4 3 2 5 3 2 6 3 2 9 4 1 4 4 3 7 2 2',
@@ -36,7 +55,7 @@ function pam250() {
 
     var dataArray = _.map(lines, (line) => line.split(" "))
 
-    var pam250 = {}
+    var pam250: ScoreMatrix = {}
     _.each(headers, (header) => pam250[header] = {})
 
         _.each(headers, (headerRow) => {
@@ -71,7 +90,9 @@ function allKLetterWords(k: number): Array<string> {
 
 // Compute word pair score given the scoringMatrix.
 // Words should be of same length.
-function wordPairScore(scoringMatrix, word1: string, word2: string): number {
+function wordPairScore(scoringMatrix: ScoreMatrix,
+                       word1: string,
+                       word2: string): number {
     var letterScores: Array<number> =
         _.map(_.zip(word1, word2), (pair: Array<string>) => {
             return scoringMatrix[pair[0]][pair[1]]
@@ -79,9 +100,21 @@ function wordPairScore(scoringMatrix, word1: string, word2: string): number {
     return _.reduce(letterScores, (acc: number, n: number) => { return acc + n }, 0)
 }
 
-function highScoringNeighbors(scoringMatrix, word: string, T: number) {
+function highScoringNeighbors(scoringMatrix: ScoreMatrix,
+                              word: string, T: number) {
     var l = word.length
     return _.filter(allKLetterWords(l), (w) => {
         return (wordPairScore(scoringMatrix, word, w) > T)
+    })
+}
+
+
+function findHitsInDatabase(db: string,
+                            words: Array<string>): Array<Hit> {
+   return _.map(words, (word:string) => {
+       return {
+           word: word,
+           dbOffset: db.indexOf(word)
+       }
     })
 }
