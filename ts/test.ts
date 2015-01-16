@@ -1,11 +1,5 @@
 /// <reference path="./references.ts" />
 
-QUnit.test("kLetterWords", (assert) => {
-    var value = "hello"
-    var words = kLetterWords("PQGEFG", 3)
-    assert.deepEqual(words, ["PQG", "QGE", "GEF", "EFG"])
-})
-
 QUnit.test("pam250", (assert) => {
     assert.equal(pam250()['A']['A'], 13)
     assert.equal(pam250()['A']['R'], 6)
@@ -25,14 +19,4 @@ QUnit.test("wordPairScore", (assert) => {
 QUnit.test("highScoringNeighbors / pam250", (assert) => {
     var expected = ["PRG", "PNG", "PDG", "PQG", "PEG", "PHG", "PKG", "PPG"]
     assert.deepEqual(highScoringNeighbors(pam250(), "PQG", 50), expected)
-})
-
-QUnit.test("findHitsInDatabase", (assert) => {
-    var db = "ASKIOPLLWLAASFLHNEQAPALSDAN"
-    var words = ["KIO", "HNE"]
-    var hits = findHitsInDatabase(db, words)
-    assert.equal(hits[0].word, "KIO")
-    assert.equal(hits[0].dbOffset, 2)
-    assert.equal(hits[1].word, "HNE")
-    assert.equal(hits[1].dbOffset, 15)
 })

@@ -8,21 +8,39 @@ interface ScoreMatrix {
     [letter: number]: ScoreMatrixRow
 }
 
-interface Hit {
-    word: string
-    dbOffset: number
+interface QueryWord {
+    queryOffset: number
+    wordText: string
 }
 
 interface Alignment {
-    start: number
+    queryOffset: number
+    dbOffset: number
     length: number
-    score: number
+}
+
+interface SearchParams {
+    query: string
+    db: string
+    scoreMatrix: ScoreMatrix
+    allowedDropOff: number
+}
+
+interface ExtendAlignmentFn extends Function {
+    (a: Alignment, params: SearchParams): Alignment
+}
+
+interface CanExtendAlignmentFn extends Function {
+    (a: Alignment, params: SearchParams): Boolean
 }
 
 // Return k letter substrings of query
-function kLetterWords(query: string, k: number): Array<string> {
+function queryWords(query: string, k: number): Array<QueryWord> {
     return _.map(_.range(0, query.length-k+1), (i: number) => {
-        return query.slice(i, i+k);
+        return {
+            queryOffset: i,
+            wordText: query.slice(i, i+k),
+        }
     });
 }
 
@@ -110,11 +128,99 @@ function highScoringNeighbors(scoringMatrix: ScoreMatrix,
 
 
 function findHitsInDatabase(db: string,
-                            words: Array<string>): Array<Hit> {
-   return _.map(words, (word:string) => {
+                            words: Array<QueryWord>): Array<Alignment> {
+   return _.map(words, (word: QueryWord) => {
        return {
-           word: word,
-           dbOffset: db.indexOf(word)
+           queryOffset: word.queryOffset,
+           dbOffset: db.indexOf(word.wordText),
+           length: word.wordText.length
        }
     })
+}
+
+function scoreAlignment(a: Alignment, search: SearchParams): number {
+    var queryPart = search.query.slice(a.queryOffset, a.queryOffset + a.length)
+    var dbPart = search.db.slice(a.dbOffset, a.dbOffset + a.length)
+    return wordPairScore(search.scoreMatrix, queryPart, dbPart)
+}
+
+function canLeftExtend(a: Alignment, search: SearchParams): Boolean {
+    return a.queryOffset > 0 && a.dbOffset > 0;
+}
+
+function canRightExtend(a: Alignment, search: SearchParams): Boolean {
+    return ((a.queryOffset + a.length) < search.query.length &&
+            (a.dbOffset + a.length) < search.db.length)
+}
+
+function extendAlignmentLeft(a: Alignment, search: SearchParams): Alignment {
+    if (canLeftExtend(a, search)) {
+        return {
+            queryOffset: a.queryOffset - 1,
+            dbOffset: a.dbOffset - 1,
+            length: a.length + 1
+        }
+    } else
+        return a
+}
+
+function extendAlignmentRight(a: Alignment, search: SearchParams): Alignment {
+    if (canRightExtend(a, search)) {
+        return {
+            queryOffset: a.queryOffset,
+            dbOffset: a.dbOffset,
+            length: a.length + 1
+        }
+    } else
+        return a
+}
+
+function findMaxAlignmentLeft(a: Alignment,
+                              search: SearchParams): Alignment
+{
+    return findMaxAlignment(a, extendAlignmentRight, canRightExtend, search)
+}
+
+function findMaxAlignmentRight(a: Alignment,
+                               search: SearchParams): Alignment
+{
+    return findMaxAlignment(a, extendAlignmentLeft, canLeftExtend, search)
+}
+
+function findMaxAlignment(a: Alignment,
+                          extendAlignment: ExtendAlignmentFn,
+                          canExtend: CanExtendAlignmentFn,
+                          search: SearchParams): Alignment
+{
+    var currentAlignment = a
+
+    // hold the peak score and alignment so we can go back
+    var peakScore = currentScore
+    var peakAlignment = a
+
+
+    var currentScore = scoreAlignment(a, search)
+    var dropOff = currentScore - peakScore
+
+    while (dropOff < search.allowedDropOff && canExtend(a, search)) {
+        currentAlignment = extendAlignment(a, search)
+
+        currentScore =
+            scoreAlignment(currentAlignment, search)
+
+        if (currentScore > peakScore) {
+            // found a new peak
+            peakScore = currentScore
+            peakAlignment = currentAlignment
+        } else {
+            // found a new cliff
+            dropOff = peakScore - currentScore
+        }
+    }
+
+    if (dropOff < search.allowedDropOff) {
+        return peakAlignment
+    } else {
+        return currentAlignment
+    }
 }
