@@ -44,6 +44,7 @@ function queryWords(query: string, k: number): Array<QueryWord> {
     });
 }
 
+// http://www.icp.ucl.ac.be/~opperd/private/pam250.html
 // Hash lookup table with pam250 values. pam250['A']['R'] = 3
 function pam250(): ScoreMatrix {
     var lines =
