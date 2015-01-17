@@ -2,15 +2,12 @@ Build project
 -------------
 
 Install Typescript compiler:
-
         sudo npm i -g typescript
 
 Install node package manager:
-
         sudo apt-get install npm
         
 Install project dependencies:
-
         npm install
         
 
