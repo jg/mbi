@@ -24,6 +24,9 @@ interface SearchParams {
     db: string
     scoreMatrix: ScoreMatrix
     allowedDropOff: number
+    wordLength: number
+    wordScoreThreshold: number
+    SValue: number
 }
 
 interface ExtendAlignmentFn extends Function {
@@ -227,4 +230,32 @@ function findMaxAlignment(a: Alignment,
     } else {
         return currentAlignment
     }
+}
+
+function getSearchParams(): SearchParams {
+    var query = $('#query').val()
+    var db = $('#db').val()
+    var wordLength = parseInt($('#wordLength').val())
+    var wordScoreThreshold = parseInt($('#wordScoreThreshold').val())
+    var allowedDropOff = parseInt($('#allowedDropOff').val())
+    var SValue = parseInt($('#SValue').val())
+    var scoreMatrixId = $('#scoreMatrix').val()
+
+    if (scoreMatrixId == 'pam250') {
+        var scoreMatrix = pam250()
+    }
+
+    return {
+        query: query,
+        db: db,
+        scoreMatrix: scoreMatrix,
+        allowedDropOff: allowedDropOff,
+        wordLength: wordLength,
+        wordScoreThreshold: wordScoreThreshold,
+        SValue: SValue
+    }
+}
+
+function runBlastPresentation() {
+
 }

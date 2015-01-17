@@ -38,35 +38,35 @@
         <div class="form-group">
           <label for="algorithm" class="col-sm-3 control-label">W (word length, usually 2-3 for aa)</label>
           <div class="col-sm-9">
-            <input type="text" class="form-control" id="sequenceB">
+            <input type="text" class="form-control" id="wordLength">
           </div>
         </div>
 
         <div class="form-group">
           <label for="algorithm" class="col-sm-3 control-label">T (word score threshold)</label>
           <div class="col-sm-9">
-            <input type="text" class="form-control" id="sequenceB">
+            <input type="text" class="form-control" id="wordScoreThreshold">
           </div>
         </div>
 
         <div class="form-group">
           <label for="algorithm" class="col-sm-3 control-label">X (match extension dropoff threshold)</label>
           <div class="col-sm-9">
-            <input type="text" class="form-control" id="sequenceB">
+            <input type="text" class="form-control" id="allowedDropOff">
           </div>
         </div>
 
         <div class="form-group">
-          <label for="algorithm" class="col-sm-3 control-label">E-value (Match significance)</label>
+          <label for="algorithm" class="col-sm-3 control-label">S value (min. match score)</label>
           <div class="col-sm-9">
-            <input type="text" class="form-control" id="sequenceB">
+            <input type="text" class="form-control" id="SValue">
           </div>
         </div>
 
         <div class="form-group">
           <label for="similarityMatrix" class="col-sm-3 control-label">Macierz</label>
           <div class="col-sm-9">
-            <select class="form-control" id="similarityMatrix"><option value="m1">pam250</option></select>
+            <select class="form-control" id="scoreMatrix"><option value="pam250">pam250</option><option value="blosum62">blosum62</option></select>
           </div>
         </div>
 
