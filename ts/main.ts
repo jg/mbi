@@ -104,6 +104,52 @@ function alphabet(): Array<string> {
     var headers = _.str.clean(headerString).split(" ")
     return headers
 }
+// ftp://ftp.ncbi.nih.gov/blast/matrices/BLOSUM62
+
+function blosum62(): ScoreMatrix {
+    var lines = [
+        ' 4',
+        '-1  5',
+        '-2  0  6',
+        '-2 -2  1  6',
+        ' 0 -3 -3  3  9',
+        '-1  1  0  0 -3  5',
+        '-1  0  0  2 -4  2  5',
+        ' 0 -2  0 -1 -3 -2 -2  6',
+        '-2  0  1 -1 -3  0  0 -2  8',
+        '-1 -3 -3 -3 -1 -3 -3 -4 -3  4',
+        '-1 -2 -3 -4 -1 -2 -3 -4 -3  2  4',
+        '-1  2  0 -1 -3  1  1 -2 -1 -3 -2  5',
+        '-1 -1 -2 -3 -1  0 -2 -3 -2  1  2 -1  5',
+        '-2 -3 -3 -3 -2 -3 -3 -3 -1  0  0 -3  0  6',
+        '-1 -2 -2 -1 -3 -1 -1 -2 -2 -3 -3 -1 -2 -4  7',
+        ' 1 -1  1  0 -1  0  0  0 -1 -2 -2  0 -1 -2 -1  4',
+        ' 0 -1  0 -1 -1 -1 -1 -2 -2 -1 -1 -1 -1 -2 -1  1  5',
+        '-3 -3 -4 -4 -2 -2 -3 -2 -2 -3 -2 -3 -1  1 -4 -3 -2  11',
+        '-2 -2 -2 -3 -2 -1 -2 -3  2 -1 -1 -2 -1  3 -3 -2 -2  2  7',
+        ' 0 -3 -3 -3 -1 -2 -2 -3 -3  3  1 -2  1 -1 -2 -2  0 -3 -1 4',
+    ]
+    var headerString =
+        "A    R    N    D    C    Q    E    G    H    I    L    K    M    F    P    S    T    W    Y    V"
+    var headers = _.str.clean(headerString).split(" ")
+
+    var dataArray = _.map(lines,(line) => _.str.clean(line).split(" "))
+
+    var blosum62: ScoreMatrix = {}
+    _.each(headers,(header) => blosum62[header] = {})
+
+    _.each(dataArray,(row, rowIndex) => {
+        _.each(row,(value, colIndex) => {
+            var rowHeader = headers[rowIndex]
+            var colHeader = headers[colIndex]
+            blosum62[rowHeader][colHeader] = parseInt(value)
+            blosum62[colHeader][rowHeader] = parseInt(value)
+        })
+    })
+
+    return blosum62;
+}
+
 
 function allKLetterWords(k: number): Array<string> {
     var chars: Array<string> = alphabet()
