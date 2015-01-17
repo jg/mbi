@@ -29,6 +29,11 @@ interface SearchParams {
     SValue: number
 }
 
+interface Neighbor {
+    word: string
+    score: number
+}
+
 interface ExtendAlignmentFn extends Function {
     (a: Alignment, params: SearchParams): Alignment
 }
@@ -256,6 +261,29 @@ function getSearchParams(): SearchParams {
     }
 }
 
-function runBlastPresentation() {
+function showQueryWords(words: Array<string>): string {
+    var out = ''
+    out += showHeader('Query words') + '<br/>'
+    out += words.join('<br/>')
+    return out
+}
 
+
+function showWordNeighbors(word: string, neighbors: Array<Neighbor>): string {
+    var out = ''
+    out += showHeader(word + ' high scoring neighbors:') + '<br/>'
+    out += '<ul>'
+    _.map(neighbors, (neighbor) => {
+        out += '<li>' + neighbor.word + ' (' + neighbor.score + ')'
+    })
+    out += '</ul>'
+    return out
+}
+
+function showHeader(title: string): string {
+    return '<h3>' + title + '</h3>'
+}
+
+function showStep(step: string): void {
+    $('#demo').html(step)
 }
