@@ -294,6 +294,8 @@ function getSearchParams(): SearchParams {
 
     if (scoreMatrixId == 'pam250') {
         var scoreMatrix = pam250()
+    } else {
+        var scoreMatrix = blosum62()
     }
 
     return {
