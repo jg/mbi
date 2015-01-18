@@ -17,6 +17,11 @@ QUnit.test("wordPairScore", (assert) => {
     assert.equal(wordPairScore(pam250(), "PQG", "GEF"), -4)
 })
 
+QUnit.test("wordPairScore / blosum62", (assert) => {
+    assert.equal(wordPairScore(blosum62(), "RGD", "RGD"), 17)
+    assert.equal(wordPairScore(blosum62(), "RGD", "KGD"), 14)
+})
+
 QUnit.test("highScoringNeighbors / pam250", (assert) => {
     var expected = 
         [  "PAG",
