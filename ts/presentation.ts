@@ -8,11 +8,6 @@ interface SearchParams {
     SValue: number
 }
 
-interface Neighbor {
-    word: string
-    score: number
-}
-
 interface ExtendAlignmentFn extends Function {
     (a: Alignment, params: SearchParams): Alignment
 }
@@ -20,7 +15,6 @@ interface ExtendAlignmentFn extends Function {
 interface CanExtendAlignmentFn extends Function {
     (a: Alignment, params: SearchParams): Boolean
 }
-
 
 function getSearchParams(): SearchParams {
     var query = $('#query').val()
@@ -55,16 +49,34 @@ function showQueryWords(words: Array<string>): string {
     return out
 }
 
-function showWordNeighborsWithScores(word: string,
-                                     neighbors: Array<Neighbor>): string {
+function showAlignment(a: Alignment, search: SearchParams,
+                       contextLength: number): void
+{
     var out = ''
-    out += showHeader(word + ' high scoring neighbors:') + '<br/>'
-    out += '<ul>'
-    _.map(neighbors, (neighbor) => {
-        out += '<li>' + neighbor.word + ' (' + neighbor.score + ')'
-    })
-    out += '</ul>'
-    return out
+    var dbPart: string = search.db.slice(a.dbOffset, a.length)
+
+    // matching db part with context
+    out += search.db.slice(a.dbOffset, a.length)
+
+    out += showNewline()
+
+    out += connections(dbPart.length)
+    out += showNewline()
+    out += search.query.slice(a.queryOffset, a.length)
+    out += showNewline()
+}
+
+function connections(n: number): string {
+    var connection = '|'
+
+    for (var i = 1; i <= n; i++) {
+        connection += '|'
+    }
+    return connection
+}
+
+function showNewline() {
+    return '<br />'
 }
 
 function showHeader(title: string): string {
@@ -74,3 +86,73 @@ function showHeader(title: string): string {
 function showStep(step: string): void {
     $('#demo').html(step)
 }
+
+function createStep(stepTitle: string, stepBody: string): string {
+    return showHeader(stepTitle) + "<div class=\"step\">" + stepBody + "</div>"
+}
+
+function showQueryWordsStep(qws: Array<QueryWord>) : string {
+    return _.map(qws, (qw) => qw.wordText).join('<br />')
+}
+
+function showWordNeighborsWithScoresStep(m: ScoreMatrix,
+                                         words: Array<QueryWord>,
+                                         T: number)
+{
+    return _.map(words, (w) => showWordNeighborsWithScores(m, w, T)).join()
+}
+
+function showWordNeighborsWithScores(scoringMatrix: ScoreMatrix,
+                                     word: QueryWord,
+                                     T: number) {
+    var scoredWords: Array<ScoredWord> =
+        highScoringNeighbors(scoringMatrix,
+                             word.wordText,
+                             T)
+    var out = ''
+    if (scoredWords.length > 0) {
+        out += bolded(word.wordText)
+        out += showNewline()
+        out += '<ul>'
+        _.each(scoredWords, (sw) => {
+            out += listItem(sw.word + '(' + bolded(sw.score) + ')')
+        })
+            out += '</ul>'
+    }
+    return out
+}
+
+function listItem(content): string {
+    return '<li>' + content + '</li>'
+}
+
+function bolded(text): string {
+    return '<b>' + text + '</b>'
+}
+
+function stepClickHandler(): void {
+    var search = getSearchParams()
+    var m = search.scoreMatrix
+    var T = search.wordScoreThreshold
+
+    var qws: Array<QueryWord> = queryWords(search.query, search.wordLength)
+
+    var qwStep: string = createStep("Query Words", showQueryWordsStep(qws))
+    var neighborsStep: string =
+        createStep("Scored Neighbors",
+                   showWordNeighborsWithScoresStep(m, qws, T))
+
+    var steps = [
+        qwStep,
+        neighborsStep
+    ]
+
+    showStep(steps.join('<br />'))
+}
+
+// bind to document
+$(document).ready(() => {
+    $('#step').click(() => {
+        stepClickHandler()
+    })
+})

@@ -17,6 +17,11 @@ interface Alignment {
     length: number
 }
 
+interface ScoredWord {
+    word: string
+    score: number
+}
+
 // Return k letter substrings of query
 function queryWords(query: string, k: number): Array<QueryWord> {
     return _.map(_.range(0, query.length-k+1), (i: number) => {
@@ -152,12 +157,28 @@ function wordPairScore(scoringMatrix: ScoreMatrix,
 }
 
 function highScoringNeighbors(scoringMatrix: ScoreMatrix,
-                              word: string, T: number) {
+                              word: string, T: number): Array<ScoredWord>
+{
     var l = word.length
-    return _.filter(allKLetterWords(l), (w) => {
-        return (wordPairScore(scoringMatrix, word, w) > T)
+    var words = allKLetterWords(l)
+    var scoredWords: Array<ScoredWord> = _.map(words, (w) => {
+        return {
+            word: w,
+            score: wordPairScore(scoringMatrix, word, w)
+        }
+    })
+
+    return _.filter(scoredWords, (w) => {
+        return w.score > T
     })
 }
+// function highScoringNeighbors(scoringMatrix: ScoreMatrix,
+//                               word: string, T: number): Array<string> {
+//     var l = word.length
+//     return _.filter(allKLetterWords(l), (w) => {
+//         return (wordPairScore(scoringMatrix, word, w) > T)
+//     })
+// }
 
 
 function findHitsInDatabase(db: string,
