@@ -252,57 +252,93 @@ function showExtendedHit(hit: Alignment, search: SearchParams, contextLength: nu
                                     contextLength)
 }
 
+var presentation
+
+function runClickHandler(): void {
+    presentation = new Presentation()
+    window['p'] = presentation
+    $('#demo').html('Presentation started')
+}
+
 function stepClickHandler(): void {
-    var search = getSearchParams()
-    var m = search.scoreMatrix
-    var T = search.wordScoreThreshold
-    var contextLength = 3
+    presentation.makeStep()
+}
 
-    var qWords: Array<QueryWord> = queryWords(search.query, search.wordLength)
+class Presentation {
+    currentStep: number
+    search: SearchParams
+    T: number
+    contextLength: number
+    qWords: Array<QueryWord>
+    steps: Array<Function>
+    highScoringQueryWords: WordNeighbors
+    highScoringWords: Array<ScoredWord>
+    hits: Array<Alignment>
 
-    var qwStep: string = createStep("Query Words", showQueryWordsStep(qWords))
-
-    var highScoringQueryWords: WordNeighbors = {}
-    _.each(qWords, (w) => {
-        var neighbors = highScoringNeighbors(m, w, T)
-        if (neighbors.length > 0) highScoringQueryWords[w.wordText] = neighbors
-    })
-        
-    var neighborsStep: string =
-        createStep("Scored Neighbors",
-                   showWordNeighborsWithScoresStep(highScoringQueryWords))
-
-    var highScoringWords = _.flatten(_.values(highScoringQueryWords))
-    var hits: Array<Alignment> = 
-        findHitsInDatabase(search.db, highScoringWords)
-
-    var showHitsStepResult: string =
-        createStep("Database Hits", showHitsStep(hits, search, contextLength))
-
-    var showExtendedHitsStepResult: string =
-        createStep("Extended Hits", showExtendedHits(hits, search, 5))
+    constructor() {
+        this.steps = [
+            this.queryWordsStep,
+            this.highScoringNeighborsStep,
+            this.hitsStep
+        ]
+        this.currentStep = 0
+    }
     
+    makeStep=(): void=>  {
+        if (this.currentStep == 0) this.search = getSearchParams() 
 
-    // window['search'] = search
-    // window['hits'] = hits
-    // window['hit'] = hits[0]
+        var step = this.steps[this.currentStep]
+        window['stuff'] = step
+        var output = step()
+        $('#demo').append(output)
 
+        this.currentStep += 1
+    }
+    
+    queryWordsStep=(): string => {
 
-                       
-    var steps = [
-        qwStep,
-        neighborsStep,
-        showHitsStepResult,
-        showExtendedHitsStepResult
-    ]
+        this.qWords = queryWords(this.search.query, this.search.wordLength)
+        return createStep("Query Words", showQueryWordsStep(this.qWords))
+    }
+    
+    highScoringNeighborsStep=(): string => {
+        var m = this.search.scoreMatrix
+        var T = this.search.wordScoreThreshold
 
-    showStep(steps.join('<br />'))
+        this.highScoringQueryWords  = {}
+        _.each(this.qWords, (w) => {
+            var neighbors = highScoringNeighbors(m, w, T)
+            if (neighbors.length > 0) 
+                this.highScoringQueryWords[w.wordText] = neighbors
+        })
+            
+        return createStep("Scored Neighbors",
+                          showWordNeighborsWithScoresStep(this.highScoringQueryWords))
+    }
+    
+    hitsStep=(): string => {
+        this.highScoringWords = _.flatten(_.values(this.highScoringQueryWords))
+        this.hits = findHitsInDatabase(this.search.db, this.highScoringWords)
+
+        return createStep("Database Hits", 
+                          showHitsStep(this.hits, this.search, this.contextLength))
+    }
+    
+    extendedHitsStep=(): string => {
+        return createStep("Extended Hits", showExtendedHits(this.hits, 
+                                                            this.search, 
+                                                            5))
+    }
 }
 
 // bind to document
 $(document).ready(() => {
-    $('#run').click(() => {
+    $('#step').click(() => {
         stepClickHandler()
+        return false
+    })
+    $('#run').click(() => {
+        runClickHandler()
         return false
     })
 })

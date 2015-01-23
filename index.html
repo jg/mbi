@@ -21,7 +21,7 @@
 
       <div id="form-errors"></div>
 
-      <form class="form-horizontal" role="form">
+      <form class="form-horizontal">
 
         <div class="form-group">
           <label for="sequenceA" class="col-sm-3 control-label">Zapytanie</label>
@@ -59,12 +59,14 @@
           </div>
         </div>
 
+        <!--
         <div class="form-group">
           <label for="algorithm" class="col-sm-3 control-label">S value (min. match score)</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" id="SValue">
           </div>
         </div>
+        -->
 
         <div class="form-group">
           <label for="similarityMatrix" class="col-sm-3 control-label">Macierz</label>
@@ -73,23 +75,24 @@
           </div>
         </div>
 
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label for="interactive" class="col-sm-3 control-label">Działanie krok po kroku</label>
           <div class="col-sm-9 control-label">
             <input type="checkbox" class="form-control" id="interactive">
           </div>
         </div>
+        -->
 
         <div class="form-actions">
-          <button class="btn">Załaduj plik</button>
-          <button type="submit" class="btn btn-success" id="run">Rozpocznij demonstrację</button>
+          <button type="button" class="btn">Załaduj plik</button>
+          <button type="button" class="btn btn-success" id="run">Rozpocznij demonstrację</button>
+          <button type="button" class="btn" id="step">Wykonaj Krok</button>
         </div>
       </form>
 
       <div id="demo-container" style="visibility: visible;">
         <!-- <div class="step-button-container"><a href="#" class="btn btn-success step-button" id="step">Krok algorytmu</a></div> -->
-        <h3>Demonstracja działania algorytmu</h3>
-        <div id="demo" style="padding-left: 40px">
+        <div id="demo">
         </div>
       </div>
     </div>

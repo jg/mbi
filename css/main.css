@@ -106,10 +106,15 @@ form .label-align {
 .demo-table .highlight {
     background-color: #5CB85C;
 }
+body {
+    padding: 80px
+}
 #demo {
-    font-size: 30px;
-    width: 1200px;
+    font-size: 20px;
+    width: 90%;
     border: 1px solid black;
+    height: 400px;
+    overflow: scroll;
     margin: 0 auto;
     padding: 40px;
 }
