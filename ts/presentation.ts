@@ -175,7 +175,7 @@ function showStep(step: string): void {
 }
 
 function createStep(stepTitle: string, stepBody: string): string {
-    return showHeader(stepTitle) + "<div class=\"step\">" + stepBody + "</div>"
+    return  "<div class=\"step\">" + showHeader(stepTitle) + stepBody + "</div>"
 }
 
 function showQueryWordsStep(qws: Array<QueryWord>) : string {
@@ -256,8 +256,7 @@ var presentation
 
 function runClickHandler(): void {
     presentation = new Presentation()
-    window['p'] = presentation
-    $('#demo').html('Presentation started')
+    $('#demo').html()
 }
 
 function stepClickHandler(): void {
@@ -279,9 +278,11 @@ class Presentation {
         this.steps = [
             this.queryWordsStep,
             this.highScoringNeighborsStep,
-            this.hitsStep
+            this.hitsStep,
+            this.extendedHitsStep
         ]
         this.currentStep = 0
+        this.contextLength = 5
     }
     
     makeStep=(): void=>  {
@@ -291,6 +292,7 @@ class Presentation {
         window['stuff'] = step
         var output = step()
         $('#demo').append(output)
+        $('#demo').animate({scrollTop: $('#demo h3:last').position().top})
 
         this.currentStep += 1
     }
