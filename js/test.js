@@ -15,12 +15,4 @@ QUnit.test("wordPairScore / blosum62", function (assert) {
     assert.equal(wordPairScore(blosum62(), "RGD", "RGD"), 17);
     assert.equal(wordPairScore(blosum62(), "RGD", "KGD"), 14);
 });
-QUnit.test("highScoringNeighbors / pam250", function (assert) {
-    var expected = ["PAG", "PRG", "PNG", "PDG", "PQA", "PQD", "PQG", "PQS", "PEG", "PHG", "PKG", "PPG"];
-    var w = {
-        wordText: "PQG",
-        queryOffset: 0
-    };
-    assert.deepEqual(highScoringNeighbors(pam250(), w, 10), expected);
-});
 //# sourceMappingURL=test.js.map
