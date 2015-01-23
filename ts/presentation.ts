@@ -256,11 +256,12 @@ var presentation
 
 function runClickHandler(): void {
     presentation = new Presentation()
-    $('#demo').html()
+    $('#demo').html('<div class="step"><h3>Start</h3></div>')
 }
 
 function stepClickHandler(): void {
     presentation.makeStep()
+    $('#demo').animate({scrollTop: $('#demo')[0].scrollHeight})
 }
 
 class Presentation {
@@ -289,11 +290,8 @@ class Presentation {
         if (this.currentStep == 0) this.search = getSearchParams() 
 
         var step = this.steps[this.currentStep]
-        window['stuff'] = step
         var output = step()
         $('#demo').append(output)
-        $('#demo').animate({scrollTop: $('#demo h3:last').position().top})
-
         this.currentStep += 1
     }
     
