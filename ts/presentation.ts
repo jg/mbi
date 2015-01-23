@@ -87,20 +87,22 @@ function showAlignmentWithContext(a: Alignment, search: SearchParams,
     var out = ''
     out += '<pre>'
     var dbSlice = sliceWithContext(search.db, a.dbOffset, a.len, contextLength)
-    // var dbPart: string = search.db.slice(a.dbOffset, a.dbOffset + a.len)
+    out += '&hellip;'
     out += dbSlice.before
     out += highlight(dbSlice.slice)
     out += dbSlice.after
+    out += '&hellip;'
     out += "\n"
 
-    out += spaces(dbSlice.before.length)
+    out += spaces(dbSlice.before.length+1)
     out += connections(dbSlice.slice.length)
     out += spaces(dbSlice.after.length)
     out += "\n"
-    out += spaces(dbSlice.before.length)
+    out += spaces(dbSlice.before.length+1)
     out += search.query.slice(a.queryOffset, a.queryOffset + a.len)
     out += spaces(dbSlice.after.length)
     out += "\n"
+    out += 'Alignment Score: ' + scoreAlignment(a, search)
     out += '</pre>'
     
     return out;
@@ -169,7 +171,7 @@ function showHeader(title: string): string {
 }
 
 function showStep(step: string): void {
-    $('#demo').html(step)
+    $('#demo').append(step)
 }
 
 function createStep(stepTitle: string, stepBody: string): string {
@@ -231,6 +233,25 @@ function bolded(text): string {
     return '<b>' + text + '</b>'
 }
 
+function showExtendedHits(hits: Array<Alignment>, 
+                          search: SearchParams, 
+                          contextLength: number) {
+    var out = ''
+    _.each(hits, (hit) => {
+        out += showExtendedHit(hit, search, contextLength)
+        out += showNewline()
+    })
+        
+    return out
+}
+
+function showExtendedHit(hit: Alignment, search: SearchParams, contextLength: number) {
+    var extended = findMaximalAlignment(hit, search)
+    return showAlignmentWithContext(extended, 
+                                    search, 
+                                    contextLength)
+}
+
 function stepClickHandler(): void {
     var search = getSearchParams()
     var m = search.scoreMatrix
@@ -255,16 +276,24 @@ function stepClickHandler(): void {
     var hits: Array<Alignment> = 
         findHitsInDatabase(search.db, highScoringWords)
 
-    window['hits'] = hits
-    
-    
     var showHitsStepResult: string =
         createStep("Database Hits", showHitsStep(hits, search, contextLength))
+
+    var showExtendedHitsStepResult: string =
+        createStep("Extended Hits", showExtendedHits(hits, search, 5))
+    
+
+    // window['search'] = search
+    // window['hits'] = hits
+    // window['hit'] = hits[0]
+
+
                        
     var steps = [
         qwStep,
         neighborsStep,
-        showHitsStepResult
+        showHitsStepResult,
+        showExtendedHitsStepResult
     ]
 
     showStep(steps.join('<br />'))
@@ -274,5 +303,6 @@ function stepClickHandler(): void {
 $(document).ready(() => {
     $('#run').click(() => {
         stepClickHandler()
+        return false
     })
 })

@@ -231,22 +231,10 @@ function extendAlignmentRight(a: Alignment, search: SearchParams): Alignment {
         return {
             queryOffset: a.queryOffset,
             dbOffset: a.dbOffset,
-            len: a.len + 1
+            len: (a.len + 1)
         }
     } else
         return a
-}
-
-function findMaxAlignmentLeft(a: Alignment,
-                              search: SearchParams): Alignment
-{
-    return findMaxAlignment(a, extendAlignmentRight, canRightExtend, search)
-}
-
-function findMaxAlignmentRight(a: Alignment,
-                               search: SearchParams): Alignment
-{
-    return findMaxAlignment(a, extendAlignmentLeft, canLeftExtend, search)
 }
 
 function findMaxAlignment(a: Alignment,
@@ -257,15 +245,14 @@ function findMaxAlignment(a: Alignment,
     var currentAlignment = a
 
     // hold the peak score and alignment so we can go back
-    var peakScore = currentScore
     var peakAlignment = a
 
-
     var currentScore = scoreAlignment(a, search)
+    var peakScore = currentScore
     var dropOff = currentScore - peakScore
 
-    while (dropOff < search.allowedDropOff && canExtend(a, search)) {
-        currentAlignment = extendAlignment(a, search)
+    while (dropOff < search.allowedDropOff && canExtend(currentAlignment, search)) {
+        currentAlignment = extendAlignment(currentAlignment, search)
 
         currentScore =
             scoreAlignment(currentAlignment, search)
@@ -285,4 +272,10 @@ function findMaxAlignment(a: Alignment,
     } else {
         return currentAlignment
     }
+}
+
+function findMaximalAlignment(a: Alignment, search: SearchParams): Alignment 
+{
+    var a1 = findMaxAlignment(a, extendAlignmentLeft, canLeftExtend, search)
+    return findMaxAlignment(a, extendAlignmentRight, canRightExtend, search)
 }
