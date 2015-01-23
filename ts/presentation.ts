@@ -312,7 +312,7 @@ class Presentation {
                 this.highScoringQueryWords[w.wordText] = neighbors
         })
             
-        return createStep("Scored Neighbors",
+        return createStep("Scored Word Neighbors",
                           showWordNeighborsWithScoresStep(this.highScoringQueryWords))
     }
     
@@ -325,9 +325,9 @@ class Presentation {
     }
     
     extendedHitsStep=(): string => {
-        return createStep("Extended Hits", showExtendedHits(this.hits, 
-                                                            this.search, 
-                                                            5))
+        return createStep("Extended Database Hits", showExtendedHits(this.hits, 
+                                                                     this.search, 
+                                                                     5))
     }
 }
 
