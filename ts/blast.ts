@@ -14,11 +14,12 @@ interface QueryWord {
 interface Alignment {
     queryOffset: number
     dbOffset: number
-    length: number
+    len: number
 }
 
 interface ScoredWord {
-    word: string
+    wordText: string
+    queryOffset: number
     score: number
 }
 
@@ -157,14 +158,15 @@ function wordPairScore(scoringMatrix: ScoreMatrix,
 }
 
 function highScoringNeighbors(scoringMatrix: ScoreMatrix,
-                              word: string, T: number): Array<ScoredWord>
+                              word: QueryWord, T: number): Array<ScoredWord> 
 {
-    var l = word.length
+    var l = word.wordText.length
     var words = allKLetterWords(l)
     var scoredWords: Array<ScoredWord> = _.map(words, (w) => {
         return {
-            word: w,
-            score: wordPairScore(scoringMatrix, word, w)
+            wordText: w,
+            queryOffset: word.queryOffset,
+            score: wordPairScore(scoringMatrix, word.wordText, w)
         }
     })
 
@@ -182,19 +184,25 @@ function highScoringNeighbors(scoringMatrix: ScoreMatrix,
 
 
 function findHitsInDatabase(db: string,
-                            words: Array<QueryWord>): Array<Alignment> {
-   return _.map(words, (word: QueryWord) => {
-       return {
-           queryOffset: word.queryOffset,
-           dbOffset: db.indexOf(word.wordText),
-           length: word.wordText.length
-       }
+                            words: Array<ScoredWord>): Array<Alignment> 
+{
+    var hits = []
+    _.each(words, (word: ScoredWord) => {
+        var dbOffset = db.indexOf(word.wordText)
+        if (dbOffset > -1) {
+            hits.push({
+                queryOffset: word.queryOffset,
+                dbOffset: db.indexOf(word.wordText),
+                len: word.wordText.length
+            })
+        }
     })
+    return hits
 }
 
 function scoreAlignment(a: Alignment, search: SearchParams): number {
-    var queryPart = search.query.slice(a.queryOffset, a.queryOffset + a.length)
-    var dbPart = search.db.slice(a.dbOffset, a.dbOffset + a.length)
+    var queryPart = search.query.slice(a.queryOffset, a.queryOffset + a.len)
+    var dbPart = search.db.slice(a.dbOffset, a.dbOffset + a.len)
     return wordPairScore(search.scoreMatrix, queryPart, dbPart)
 }
 
@@ -203,8 +211,8 @@ function canLeftExtend(a: Alignment, search: SearchParams): Boolean {
 }
 
 function canRightExtend(a: Alignment, search: SearchParams): Boolean {
-    return ((a.queryOffset + a.length) < search.query.length &&
-            (a.dbOffset + a.length) < search.db.length)
+    return ((a.queryOffset + a.len) < search.query.length &&
+            (a.dbOffset + a.len) < search.db.length)
 }
 
 function extendAlignmentLeft(a: Alignment, search: SearchParams): Alignment {
@@ -212,7 +220,7 @@ function extendAlignmentLeft(a: Alignment, search: SearchParams): Alignment {
         return {
             queryOffset: a.queryOffset - 1,
             dbOffset: a.dbOffset - 1,
-            length: a.length + 1
+            len: a.len + 1
         }
     } else
         return a
@@ -223,7 +231,7 @@ function extendAlignmentRight(a: Alignment, search: SearchParams): Alignment {
         return {
             queryOffset: a.queryOffset,
             dbOffset: a.dbOffset,
-            length: a.length + 1
+            len: a.len + 1
         }
     } else
         return a

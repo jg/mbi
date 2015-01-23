@@ -36,5 +36,9 @@ QUnit.test("highScoringNeighbors / pam250", (assert) => {
            "PHG",
            "PKG",
            "PPG"]
-    assert.deepEqual(highScoringNeighbors(pam250(), "PQG", 10), expected)
+    var w: QueryWord = {
+        wordText: "PQG",
+        queryOffset: 0
+    }
+    assert.deepEqual(highScoringNeighbors(pam250(), w, 10), expected)
 })

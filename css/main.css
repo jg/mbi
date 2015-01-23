@@ -106,3 +106,17 @@ form .label-align {
 .demo-table .highlight {
     background-color: #5CB85C;
 }
+#demo {
+    font-size: 30px;
+    width: 1200px;
+    border: 1px solid black;
+    margin: 0 auto;
+    padding: 40px;
+}
+#demo h3 {
+    text-decoration: underline;
+    font-weight: 35px;
+}
+#demo pre {
+    font-size: 30px;
+}
